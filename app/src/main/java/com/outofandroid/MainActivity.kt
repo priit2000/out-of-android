@@ -16,6 +16,7 @@ import com.google.android.material.textfield.TextInputEditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.outofandroid.util.PreferenceManager
+import com.outofandroid.service.StatusNotificationService
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateScheduleDisplay()
+        updateStatusNotification()
     }
     
     private fun initializeViews() {
@@ -91,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             
             preferenceManager.setAutoResponseEnabled(isChecked)
             updateStatusText()
+            updateStatusNotification()
             
             val message = if (isChecked) "Auto responder enabled" else "Auto responder disabled"
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -163,6 +166,16 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             scheduleLayout.visibility = android.view.View.GONE
+        }
+    }
+    
+    private fun updateStatusNotification() {
+        val isEnabled = preferenceManager.isAutoResponseEnabled()
+        
+        if (isEnabled) {
+            StatusNotificationService.startService(this)
+        } else {
+            StatusNotificationService.stopService(this)
         }
     }
     

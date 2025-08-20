@@ -15,6 +15,7 @@ An Android application that automatically rejects incoming calls and sends custo
 - **Advanced Scheduling**: Set specific time ranges for auto-response to be active
 - **Schedule Presets**: Quick setup for Work Hours, Sleep Mode, and Meeting Mode
 - **Live Schedule Display**: See current schedule status on main screen
+- **Status Bar Indicator**: Persistent red "🔴 OOA" notification when active
 - **Professional Settings**: Native Android settings interface with time pickers
 - **Simple UI**: Easy-to-use interface for managing settings and messages
 
@@ -25,6 +26,7 @@ An Android application that automatically rejects incoming calls and sends custo
    - Automatically rejects the call using `TelecomManager`
    - Sends a predefined SMS message to the caller
 3. The app respects whitelist and scheduling settings
+4. A persistent **🔴 OOA** indicator appears in the status bar when active
 
 ## Required Permissions
 
@@ -58,13 +60,18 @@ The app requires the following permissions to function:
    - 🔔 Notification permissions (service alerts)
    
 2. **Configure your settings**:
-   - ✅ Enable auto-response toggle
+   - ✅ Enable auto-response toggle → **🔴 OOA** appears in status bar
    - ✏️ Set your custom message
    - ⚙️ Tap **Settings** for advanced options:
      - ⏰ Enable scheduled mode
      - 🕘 Set custom start/end times
      - ⚡ Use quick presets (Work Hours, Sleep Mode, Meeting Mode)
      - 👥 Add contacts to whitelist (optional)
+
+3. **Status Bar Indicator**:
+   - **🔴 OOA** - Shows when auto-responder is active
+   - Tap notification to open app
+   - Shows schedule information when scheduling is enabled
 
 ## Important Notes
 
