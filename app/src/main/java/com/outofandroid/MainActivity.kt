@@ -13,8 +13,12 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.outofandroid.util.PreferenceManager
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     
@@ -22,6 +26,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var enableSwitch: SwitchMaterial
     private lateinit var messageEditText: TextInputEditText
     private lateinit var statusText: TextView
+    private lateinit var scheduleLayout: LinearLayout
+    private lateinit var scheduleText: TextView
+    private lateinit var scheduleStatus: TextView
     private lateinit var permissionsCard: MaterialCardView
     private lateinit var saveMessageButton: MaterialButton
     private lateinit var requestPermissionsButton: MaterialButton
@@ -56,10 +63,18 @@ class MainActivity : AppCompatActivity() {
         updateUI()
     }
     
+    override fun onResume() {
+        super.onResume()
+        updateScheduleDisplay()
+    }
+    
     private fun initializeViews() {
         enableSwitch = findViewById(R.id.enableSwitch)
         messageEditText = findViewById(R.id.messageEditText)
         statusText = findViewById(R.id.statusText)
+        scheduleLayout = findViewById(R.id.scheduleLayout)
+        scheduleText = findViewById(R.id.scheduleText)
+        scheduleStatus = findViewById(R.id.scheduleStatus)
         permissionsCard = findViewById(R.id.permissionsCard)
         saveMessageButton = findViewById(R.id.saveMessageButton)
         requestPermissionsButton = findViewById(R.id.requestPermissionsButton)
@@ -110,6 +125,7 @@ class MainActivity : AppCompatActivity() {
         enableSwitch.isChecked = preferenceManager.isAutoResponseEnabled()
         messageEditText.setText(preferenceManager.getAutoResponseMessage())
         updateStatusText()
+        updateScheduleDisplay()
         updatePermissionsUI()
     }
     
@@ -122,6 +138,32 @@ class MainActivity : AppCompatActivity() {
                 if (isEnabled) R.color.teal_700 else android.R.color.darker_gray
             )
         )
+    }
+    
+    private fun updateScheduleDisplay() {
+        val isScheduledEnabled = preferenceManager.isScheduledModeEnabled()
+        
+        if (isScheduledEnabled) {
+            scheduleLayout.visibility = android.view.View.VISIBLE
+            
+            val startTime = preferenceManager.getScheduleStartTime()
+            val endTime = preferenceManager.getScheduleEndTime()
+            val isInSchedule = preferenceManager.isCurrentTimeInSchedule()
+            
+            scheduleText.text = "Schedule: $startTime - $endTime"
+            
+            if (isInSchedule) {
+                scheduleStatus.text = "Active"
+                scheduleStatus.setTextColor(ContextCompat.getColor(this, R.color.white))
+                scheduleStatus.background = ContextCompat.getDrawable(this, R.drawable.schedule_status_active)
+            } else {
+                scheduleStatus.text = "Inactive"
+                scheduleStatus.setTextColor(ContextCompat.getColor(this, R.color.white))
+                scheduleStatus.background = ContextCompat.getDrawable(this, R.drawable.schedule_status_inactive)
+            }
+        } else {
+            scheduleLayout.visibility = android.view.View.GONE
+        }
     }
     
     private fun updatePermissionsUI() {
