@@ -29,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
     }
     
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
         return true
     }
 }
@@ -66,7 +66,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
     
     private fun showTimePickerDialog(isStartTime: Boolean) {
-        val calendar = Calendar.getInstance()
         val currentTime = if (isStartTime) {
             sharedPreferences.getString("schedule_start_time", "09:00") ?: "09:00"
         } else {

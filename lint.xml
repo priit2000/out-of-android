@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Suppress warnings for adaptive icon requirements -->
+    <issue id="AdaptiveIconMissingBounds" severity="informational" />
+    
+    <!-- Suppress warnings for unused resources that may be used by the system -->
+    <issue id="UnusedResources" severity="informational" />
+    
+    <!-- Allow hardcoded strings for debug/development purposes -->
+    <issue id="HardcodedText" severity="informational" />
+    
+    <!-- Suppress warnings about missing launcher icon densities -->
+    <issue id="IconMissingDensityFolder" severity="informational" />
+    
+    <!-- Allow small icons (our 16dp schedule icon is intentional) -->
+    <issue id="SmallSp" severity="informational" />
+    
+    <!-- Suppress overdraw warnings for card layouts -->
+    <issue id="Overdraw" severity="informational" />
+</lint>

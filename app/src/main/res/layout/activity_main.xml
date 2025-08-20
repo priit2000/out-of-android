@@ -77,7 +77,8 @@
                         android:layout_marginEnd="8dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_schedule"
-                        android:tint="?attr/colorOnSurface" />
+                        android:contentDescription="@string/schedule_icon_description"
+                        app:tint="?attr/colorOnSurface" />
 
                     <TextView
                         android:id="@+id/scheduleText"
