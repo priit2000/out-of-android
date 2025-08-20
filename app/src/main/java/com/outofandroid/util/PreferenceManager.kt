@@ -114,12 +114,32 @@ class PreferenceManager(context: Context) {
     fun isCurrentTimeInSchedule(): Boolean {
         if (!isScheduledModeEnabled()) return false
         
-        val currentTime = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
-            .format(java.util.Date())
+        val currentCalendar = java.util.Calendar.getInstance()
+        val currentHour = currentCalendar.get(java.util.Calendar.HOUR_OF_DAY)
+        val currentMinute = currentCalendar.get(java.util.Calendar.MINUTE)
+        val currentTimeInMinutes = currentHour * 60 + currentMinute
         
         val startTime = getScheduleStartTime()
         val endTime = getScheduleEndTime()
         
-        return currentTime >= startTime && currentTime <= endTime
+        val startParts = startTime.split(":")
+        val startTimeInMinutes = startParts[0].toInt() * 60 + startParts[1].toInt()
+        
+        val endParts = endTime.split(":")
+        val endTimeInMinutes = endParts[0].toInt() * 60 + endParts[1].toInt()
+        
+        val isInSchedule = if (startTimeInMinutes <= endTimeInMinutes) {
+            // Same day schedule (e.g., 09:00 - 17:00)
+            currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes
+        } else {
+            // Cross-midnight schedule (e.g., 22:00 - 07:00)
+            currentTimeInMinutes >= startTimeInMinutes || currentTimeInMinutes <= endTimeInMinutes
+        }
+        
+        android.util.Log.d("PreferenceManager", 
+            "Schedule check - Current: ${String.format("%02d:%02d", currentHour, currentMinute)}, " +
+            "Range: $startTime-$endTime, InSchedule: $isInSchedule")
+        
+        return isInSchedule
     }
 }
