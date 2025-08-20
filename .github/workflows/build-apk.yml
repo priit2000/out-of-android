@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
     
     steps:
     - name: Checkout code
@@ -51,6 +54,8 @@ jobs:
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
