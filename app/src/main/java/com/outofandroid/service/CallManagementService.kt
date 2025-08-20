@@ -55,15 +55,24 @@ class CallManagementService : Service() {
         Log.d(TAG, "Rejecting call and sending message to: $phoneNumber")
         
         try {
-            // Reject the call
-            val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-            if (telecomManager.isInCall) {
-                telecomManager.endCall()
-                Log.d(TAG, "Call rejected successfully")
-                
-                // Send SMS response
-                sendAutoResponseMessage(phoneNumber)
+            // Reject the call using TelecomManager
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+                if (checkSelfPermission(android.Manifest.permission.ANSWER_PHONE_CALLS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    telecomManager.endCall()
+                    Log.d(TAG, "Call rejected successfully")
+                } else {
+                    Log.w(TAG, "Missing ANSWER_PHONE_CALLS permission")
+                }
+            } else {
+                // For older Android versions, we can't programmatically reject calls
+                // without using reflection or accessibility services
+                Log.w(TAG, "Call rejection not supported on this Android version")
             }
+            
+            // Send SMS response regardless
+            sendAutoResponseMessage(phoneNumber)
+            
         } catch (e: SecurityException) {
             Log.e(TAG, "Security exception when trying to reject call", e)
         } catch (e: Exception) {
