@@ -12,7 +12,10 @@ An Android application that automatically rejects incoming calls and sends custo
 - **Automatic Call Rejection**: Automatically rejects incoming calls when enabled
 - **Custom SMS Responses**: Sends personalized auto-response messages to missed callers
 - **Contact Whitelist**: Allow specific contacts to bypass auto-response
-- **Scheduled Operation**: Set specific time ranges for auto-response to be active
+- **Advanced Scheduling**: Set specific time ranges for auto-response to be active
+- **Schedule Presets**: Quick setup for Work Hours, Sleep Mode, and Meeting Mode
+- **Live Schedule Display**: See current schedule status on main screen
+- **Professional Settings**: Native Android settings interface with time pickers
 - **Simple UI**: Easy-to-use interface for managing settings and messages
 
 ## How It Works
@@ -57,8 +60,11 @@ The app requires the following permissions to function:
 2. **Configure your settings**:
    - ✅ Enable auto-response toggle
    - ✏️ Set your custom message
-   - ⏰ Configure scheduling (optional)
-   - 👥 Add contacts to whitelist (optional)
+   - ⚙️ Tap **Settings** for advanced options:
+     - ⏰ Enable scheduled mode
+     - 🕘 Set custom start/end times
+     - ⚡ Use quick presets (Work Hours, Sleep Mode, Meeting Mode)
+     - 👥 Add contacts to whitelist (optional)
 
 ## Important Notes
 
@@ -69,10 +75,11 @@ The app requires the following permissions to function:
 
 ## Usage Scenarios
 
-- **Meetings & Presentations**: Enable during important meetings
-- **Focus Time**: Set scheduled hours for uninterrupted work
-- **Vacation**: Use as an "out of office" for phone calls
-- **Driving**: Automatically respond when unable to answer safely
+- **Meetings & Presentations**: Use Meeting Mode preset for 2-hour blocks
+- **Focus Time**: Set Work Hours (9 AM - 5 PM) for business auto-response
+- **Sleep Mode**: Automatic quiet hours (10 PM - 7 AM) for nighttime
+- **Vacation**: Custom schedule for "out of office" phone responses
+- **Driving**: Quick toggle for safe hands-free response
 
 ## Technical Details
 
@@ -80,7 +87,9 @@ The app requires the following permissions to function:
 - **Call Detection**: Monitors `TelephonyManager.ACTION_PHONE_STATE_CHANGED`
 - **Call Management**: Uses `TelecomManager.endCall()` for call rejection
 - **SMS Sending**: Utilizes `SmsManager` for automatic responses
-- **Data Storage**: SharedPreferences for settings persistence
+- **Scheduling**: Advanced time-based filtering with real-time status
+- **Settings**: Native Android PreferenceFragmentCompat interface
+- **Data Storage**: Dual storage (SharedPreferences + custom PreferenceManager)
 
 ## Troubleshooting
 
