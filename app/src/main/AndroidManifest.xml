@@ -41,6 +41,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Settings Activity -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.OutOfAndroid"
+            android:parentActivityName=".MainActivity" />
+
         <!-- Call Management Service -->
         <service
             android:name=".service.CallManagementService"

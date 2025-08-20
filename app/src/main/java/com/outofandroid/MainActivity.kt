@@ -1,6 +1,7 @@
 package com.outofandroid
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.telephony.SmsManager
@@ -96,6 +97,12 @@ class MainActivity : AppCompatActivity() {
         
         testButton.setOnClickListener {
             testSMSFunctionality()
+        }
+
+        val settingsButton = findViewById<MaterialButton>(R.id.settingsButton)
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
     }
     

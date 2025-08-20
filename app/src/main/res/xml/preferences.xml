@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory 
+        android:title="Auto-Response Schedule"
+        android:summary="Set specific hours when auto-response is active">
+
+        <SwitchPreferenceCompat
+            android:key="scheduled_mode_enabled"
+            android:title="Enable Scheduled Mode"
+            android:summary="Only respond to calls during specific hours"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_schedule" />
+
+        <Preference
+            android:key="schedule_start_time"
+            android:title="Start Time"
+            android:summary="Auto-response starts at 09:00"
+            android:dependency="scheduled_mode_enabled"
+            android:icon="@drawable/ic_start_time" />
+
+        <Preference
+            android:key="schedule_end_time"
+            android:title="End Time"
+            android:summary="Auto-response ends at 17:00"
+            android:dependency="scheduled_mode_enabled"
+            android:icon="@drawable/ic_end_time" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="Quick Presets"
+        android:summary="Common schedule presets">
+
+        <Preference
+            android:key="preset_work_hours"
+            android:title="Work Hours (9 AM - 5 PM)"
+            android:summary="Standard business hours"
+            android:icon="@drawable/ic_work" />
+
+        <Preference
+            android:key="preset_sleep_mode"
+            android:title="Sleep Mode (10 PM - 7 AM)" 
+            android:summary="Quiet hours for rest"
+            android:icon="@drawable/ic_sleep" />
+
+        <Preference
+            android:key="preset_meeting_mode"
+            android:title="Meeting Mode (Current time + 2 hours)"
+            android:summary="Temporary meeting block"
+            android:icon="@drawable/ic_meeting" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
