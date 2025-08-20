@@ -43,6 +43,9 @@ class CallManagementService : Service() {
                         rejectCallAndSendMessage(number)
                     }
                 }
+                else -> {
+                    Log.w(TAG, "Unknown action: $action")
+                }
             }
         }
         
