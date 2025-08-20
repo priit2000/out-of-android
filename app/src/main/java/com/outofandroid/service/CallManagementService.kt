@@ -62,6 +62,7 @@ class CallManagementService : Service() {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
                 val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
                 if (checkSelfPermission(android.Manifest.permission.ANSWER_PHONE_CALLS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    @Suppress("DEPRECATION")
                     telecomManager.endCall()
                     Log.d(TAG, "Call rejected successfully")
                 } else {
@@ -91,7 +92,12 @@ class CallManagementService : Service() {
             val message = preferenceManager.getAutoResponseMessage()
             Log.d(TAG, "Sending SMS to $phoneNumber: $message")
             
-            val smsManager = SmsManager.getDefault()
+            val smsManager = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                getSystemService(SmsManager::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                SmsManager.getDefault()
+            }
             smsManager.sendTextMessage(phoneNumber, null, message, null, null)
             
             Log.d(TAG, "SMS sent successfully")
