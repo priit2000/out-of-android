@@ -50,8 +50,15 @@ class CallStateReceiver : BroadcastReceiver() {
             return
         }
         
+        // For Android 10+, phone number might be null due to privacy restrictions
+        // We'll still reject the call but can't send SMS without the number
         if (phoneNumber == null) {
-            Log.w(TAG, "Phone number is null")
+            Log.w(TAG, "Phone number is null (expected on Android 10+ without special permissions)")
+            // Still reject the call even without the number
+            val serviceIntent = Intent(context, CallManagementService::class.java).apply {
+                putExtra("action", "reject_only")
+            }
+            context.startForegroundService(serviceIntent)
             return
         }
         

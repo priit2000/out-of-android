@@ -35,13 +35,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var requestPermissionsButton: MaterialButton
     private lateinit var testButton: MaterialButton
     
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.ANSWER_PHONE_CALLS,
-        Manifest.permission.SEND_SMS,
-        Manifest.permission.READ_CONTACTS,
-        Manifest.permission.POST_NOTIFICATIONS
-    )
+    private val requiredPermissions = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+        arrayOf(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_PHONE_NUMBERS,
+            Manifest.permission.ANSWER_PHONE_CALLS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.READ_CALL_LOG
+        )
+    } else {
+        arrayOf(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ANSWER_PHONE_CALLS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.READ_CALL_LOG
+        )
+    }
     
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()

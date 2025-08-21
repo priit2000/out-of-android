@@ -43,6 +43,9 @@ class CallManagementService : Service() {
                         rejectCallAndSendMessage(number)
                     }
                 }
+                "reject_only" -> {
+                    rejectCallOnly()
+                }
                 else -> {
                     Log.w(TAG, "Unknown action: $action")
                 }
@@ -120,6 +123,33 @@ class CallManagementService : Service() {
         
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
+    }
+    
+    private fun rejectCallOnly() {
+        Log.d(TAG, "Rejecting call (no phone number available)")
+        
+        try {
+            // Reject the call using TelecomManager
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+                if (checkSelfPermission(android.Manifest.permission.ANSWER_PHONE_CALLS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    @Suppress("DEPRECATION")
+                    telecomManager.endCall()
+                    Log.d(TAG, "Call rejected successfully")
+                } else {
+                    Log.w(TAG, "Missing ANSWER_PHONE_CALLS permission")
+                }
+            } else {
+                Log.w(TAG, "Call rejection not supported on this Android version")
+            }
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Security exception when trying to reject call", e)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error rejecting call", e)
+        }
+        
+        // Stop the service
+        stopSelf()
     }
     
     private fun createNotification(): Notification {
