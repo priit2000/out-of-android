@@ -85,6 +85,16 @@
             </intent-filter>
         </receiver>
 
+        <!-- Call Screening Service for Android 10+ -->
+        <service
+            android:name=".service.CallScreeningServiceImpl"
+            android:permission="android.permission.BIND_SCREENING_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.telecom.CallScreeningService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

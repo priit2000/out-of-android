@@ -20,6 +20,8 @@ import com.outofandroid.service.StatusNotificationService
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.app.role.RoleManager
+import android.os.Build
 
 class MainActivity : AppCompatActivity() {
     
@@ -63,8 +65,23 @@ class MainActivity : AppCompatActivity() {
         if (allGranted) {
             updatePermissionsUI()
             Toast.makeText(this, "All permissions granted!", Toast.LENGTH_SHORT).show()
+            // Request call screening role for Android 10+
+            requestCallScreeningRole()
         } else {
             Toast.makeText(this, "Some permissions were denied. App may not work properly.", Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    private val requestRoleLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            if (roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
+                Toast.makeText(this, "Call screening role granted!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Call screening role denied. SMS responses may not work on Android 10+.", Toast.LENGTH_LONG).show()
+            }
         }
     }
     
@@ -207,6 +224,16 @@ class MainActivity : AppCompatActivity() {
     
     private fun requestPermissions() {
         requestPermissionLauncher.launch(requiredPermissions)
+    }
+    
+    private fun requestCallScreeningRole() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            if (!roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
+                val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
+                requestRoleLauncher.launch(intent)
+            }
+        }
     }
     
     private fun testSMSFunctionality() {
