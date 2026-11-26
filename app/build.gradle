@@ -11,14 +11,50 @@ android {
         applicationId "com.outofandroid"
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        // A growing versionCode lets every new build install over the previous one
+        // (Android refuses to install a lower versionCode). It counts 10-minute steps
+        // since 2025-01-01, so local and CI builds stay in the same order.
+        def runNumber = System.getenv("GITHUB_RUN_NUMBER")
+        versionCode = (int) ((System.currentTimeMillis() - 1735689600000L) / 600000L)
+        versionName = runNumber ? "1.0.${runNumber}" : "1.0-local"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Signing. Before this, release APKs were published unsigned and every CI run
+    // signed debug APKs with a new random key, so Android refused to install or
+    // update them with "App not installed". Now debug and release share one key,
+    // read from keystore.properties (local, not in git) or SIGNING_* env vars (CI).
+    // With neither present, release falls back to the debug key so it is never unsigned.
+    def keystoreProps = new Properties()
+    def keystorePropsFile = rootProject.file("keystore.properties")
+    if (keystorePropsFile.exists()) {
+        keystorePropsFile.withInputStream { keystoreProps.load(it) }
+    }
+    def signingValue = { String prop, String env -> System.getenv(env) ?: keystoreProps.getProperty(prop) }
+    def sharedStoreFile = signingValue("storeFile", "SIGNING_KEYSTORE_FILE")
+    def hasSharedKey = sharedStoreFile != null && rootProject.file(sharedStoreFile).exists()
+
+    signingConfigs {
+        if (hasSharedKey) {
+            shared {
+                storeFile rootProject.file(sharedStoreFile)
+                storePassword signingValue("storePassword", "SIGNING_STORE_PASSWORD")
+                keyAlias signingValue("keyAlias", "SIGNING_KEY_ALIAS")
+                keyPassword signingValue("keyPassword", "SIGNING_KEY_PASSWORD")
+                enableV1Signing true
+                enableV2Signing true
+                enableV3Signing true
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            if (hasSharedKey) signingConfig signingConfigs.shared
+        }
         release {
+            signingConfig hasSharedKey ? signingConfigs.shared : signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

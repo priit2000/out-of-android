@@ -101,9 +101,12 @@ class CallManagementService : Service() {
                 @Suppress("DEPRECATION")
                 SmsManager.getDefault()
             }
-            smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-            
-            Log.d(TAG, "SMS sent successfully")
+            if (checkSelfPermission(android.Manifest.permission.SEND_SMS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                smsManager.sendTextMessage(phoneNumber, null, message, null, null)
+                Log.d(TAG, "SMS sent successfully")
+            } else {
+                Log.w(TAG, "Missing SEND_SMS permission")
+            }
         } catch (e: SecurityException) {
             Log.e(TAG, "Security exception when sending SMS", e)
         } catch (e: Exception) {

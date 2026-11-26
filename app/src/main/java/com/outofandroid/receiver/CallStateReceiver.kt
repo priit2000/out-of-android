@@ -1,8 +1,10 @@
 package com.outofandroid.receiver
 
+import android.app.role.RoleManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.outofandroid.service.CallManagementService
@@ -37,8 +39,17 @@ class CallStateReceiver : BroadcastReceiver() {
     }
     
     private fun handleIncomingCall(context: Context, phoneNumber: String?) {
+        // On Android 10+, defer to CallScreeningServiceImpl if the role is held
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = context.getSystemService(RoleManager::class.java)
+            if (roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
+                Log.d(TAG, "Call screening role held, deferring to CallScreeningServiceImpl")
+                return
+            }
+        }
+
         val prefs = PreferenceManager(context)
-        
+
         if (!prefs.isAutoResponseEnabled()) {
             Log.d(TAG, "Auto response is disabled")
             return

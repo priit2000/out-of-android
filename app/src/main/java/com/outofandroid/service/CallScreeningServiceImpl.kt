@@ -25,7 +25,16 @@ class CallScreeningServiceImpl : CallScreeningService() {
     override fun onScreenCall(callDetails: Call.Details) {
         val phoneNumber = callDetails.handle?.schemeSpecificPart
         Log.d(TAG, "Screening call from: $phoneNumber")
-        
+
+        // On Android 10+ the screening service is also bound for outgoing calls.
+        // Never reject those or text the person being called.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            callDetails.callDirection != Call.Details.DIRECTION_INCOMING) {
+            Log.d(TAG, "Not an incoming call, allowing")
+            respondToCall(callDetails, CallResponse.Builder().build())
+            return
+        }
+
         if (!preferenceManager.isAutoResponseEnabled()) {
             Log.d(TAG, "Auto response is disabled")
             respondToCall(callDetails, CallResponse.Builder().build())
@@ -61,10 +70,11 @@ class CallScreeningServiceImpl : CallScreeningService() {
             .setSkipNotification(false)
             .build()
         
-        respondToCall(callDetails, response)
-        
-        // Send SMS after rejecting
+        // Send SMS before rejecting — after respondToCall() the system may unbind/destroy
+        // the service before the SMS is sent
         sendAutoResponseMessage(phoneNumber)
+
+        respondToCall(callDetails, response)
     }
     
     private fun sendAutoResponseMessage(phoneNumber: String) {

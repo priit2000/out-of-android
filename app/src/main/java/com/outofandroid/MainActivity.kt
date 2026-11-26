@@ -99,6 +99,10 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         updateScheduleDisplay()
         updateStatusNotification()
+        // Always ensure call screening role is held when auto-response is active
+        if (preferenceManager.isAutoResponseEnabled() && hasAllPermissions()) {
+            requestCallScreeningRole()
+        }
     }
     
     private fun initializeViews() {
@@ -125,7 +129,11 @@ class MainActivity : AppCompatActivity() {
             preferenceManager.setAutoResponseEnabled(isChecked)
             updateStatusText()
             updateStatusNotification()
-            
+
+            if (isChecked) {
+                requestCallScreeningRole()
+            }
+
             val message = if (isChecked) "Auto responder enabled" else "Auto responder disabled"
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
